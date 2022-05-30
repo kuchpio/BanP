@@ -1,0 +1,38 @@
+{
+    "manifest_version": 3,
+    "name": "BanP", 
+    "version": "0.0.1",
+    "description": "Simple extension that gives information about diffrent csgo maps on FACEIT.",
+    "icons": {
+        "128": "assets/logo.png"
+    },
+    "permissions": [
+        "webNavigation",
+        "storage"
+    ],
+    "host_permissions": [
+        "https://open.faceit.com/data/v4/*"
+    ], 
+    "action": {
+        "default_title": "Check rozklad jazdy here!",
+        "default_popup": "popup.html"
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "web_accessible_resources": [
+        {
+          "resources": [ 
+              "assets/collection_icon_de_dust2.png",
+              "assets/collection_icon_de_mirage.png",
+              "assets/collection_icon_de_nuke.png",
+              "assets/collection_icon_de_overpass.png",
+              "assets/collection_icon_de_train.png",
+              "assets/collection_icon_de_inferno.png",
+              "assets/collection_icon_de_vertigo.png",
+              "assets/collection_icon_de_ancient.png"
+             ],
+          "extension_ids": [ "plpggcikpiciekafodekndcgipgdlhjn" ]
+        }
+    ]
+}
