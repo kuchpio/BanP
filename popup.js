@@ -105,16 +105,25 @@ function createChart(canvas, mapStats, toggleTable)
         let mouseAngle = Math.atan2((mouseY - canvas.height / 2), (mouseX - canvas.width / 2));
         if (mouseAngle < 0) mouseAngle = 2 * Math.PI + mouseAngle;
     
-        if (mouseR > chartRadius) return;
-    
         let mapIndex;
         for (mapIndex = 0; mapIndex < chartAngles.length - 1; mapIndex++)
         {
             if (chartAngles[mapIndex + 1] > mouseAngle) break;
         }
+        
+        const iconAngle = mapIndex == chartAngles.length - 1 ? chartAngles[mapIndex] / 2 + Math.PI : (chartAngles[mapIndex + 1] + chartAngles[mapIndex]) / 2;
+        if (mouseR > chartRadius && !isOnIcon(mouseX, mouseY, canvas.width / 2, canvas.height / 2, iconRadius, iconAngle, 28)) return;
 
         toggleTable(mapIndex);
     })
+}
+
+function isOnIcon(mouseX, mouseY, chartCenterX, chartCenterY, iconRadius, iconAngle, iconSize) {
+    const iconNWX = chartCenterX + iconRadius * Math.cos(iconAngle) - iconSize / 2;
+    const iconNWY = chartCenterY + iconRadius * Math.sin(iconAngle) - iconSize / 2;
+    const iconSEX = iconNWX + iconSize;
+    const iconSEY = iconNWY + iconSize;
+    return mouseX >= iconNWX && mouseX <= iconSEX && mouseY >= iconNWY && mouseY <= iconSEY;
 }
 
 function drawMapArc(ctx, img, x, y, r1, r2, startAngle, endAngle) 
