@@ -12,8 +12,10 @@ const MAPS = [
     {name: "Train", guid: "de_train", img: "https://liquipedia.net/commons/images/thumb/5/56/Train_csgo.jpg/534px-Train_csgo.jpg", icon: "assets/collection_icon_de_train.png"},
     {name: "Inferno", guid: "de_inferno", img: "https://liquipedia.net/commons/images/thumb/2/2b/De_new_inferno.jpg/534px-De_new_inferno.jpg", icon: "assets/collection_icon_de_inferno.png"},
     {name: "Vertigo", guid: "de_vertigo", img: "https://liquipedia.net/commons/images/thumb/5/59/Csgo_de_vertigo_new.jpg/534px-Csgo_de_vertigo_new.jpg", icon: "assets/collection_icon_de_vertigo.png"},
-    {name: "Ancient", guid: "de_ancient", img: "https://liquipedia.net/commons/images/thumb/3/35/Csgo_ancient.jpeg/534px-Csgo_ancient.jpeg", icon: "assets/collection_icon_de_ancient.png"}
+    {name: "Ancient", guid: "de_ancient", img: "https://liquipedia.net/commons/images/thumb/3/35/Csgo_ancient.jpeg/534px-Csgo_ancient.jpeg", icon: "assets/collection_icon_de_ancient.png"},
+    {name: "Anubis", guid: "de_anubis", img: "https://liquipedia.net/commons/images/5/59/Anubis_csgo.jpg", icon: "assets/collection_icon_de_anubis.png"}
 ];
+const RECENTLY_OFFSET = 4; /* hours */
 
 let lastMatchID = "";
 
@@ -47,10 +49,10 @@ chrome.webNavigation.onHistoryStateUpdated.addListener(async (details) => {
 
 async function fetchMapStats(current_match_id)
 {
-    const RECENTLY_OFFSET = 4; /* hours */
     const RECENTLY_VALUE = Date.now() / 1000 - RECENTLY_OFFSET * 3600;
     
-    const matchResponse = await fetch(FACEIT_DATA_API_ENDPOINT + 'matches/' + current_match_id, {headers: STANDARD_REQUEST_HEADER})
+    const matchResponse = await fetch(FACEIT_DATA_API_ENDPOINT + 'matches/' + current_match_id, {headers: STANDARD_REQUEST_HEADER});
+    
     if (!matchResponse.ok)
     {
         console.log(`Could not fetch data from this match (id: ${current_match_id})`);

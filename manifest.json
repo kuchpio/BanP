@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
     "name": "BanP", 
-    "version": "0.0.1",
+    "version": "0.0.3",
     "description": "Simple extension that gives information about diffrent csgo maps on FACEIT.",
     "icons": {
         "128": "assets/logo.png"
@@ -30,7 +30,8 @@
               "assets/collection_icon_de_train.png",
               "assets/collection_icon_de_inferno.png",
               "assets/collection_icon_de_vertigo.png",
-              "assets/collection_icon_de_ancient.png"
+              "assets/collection_icon_de_ancient.png",
+              "assets/collection_icon_de_anubis.png"
              ],
           "extension_ids": [ "plpggcikpiciekafodekndcgipgdlhjn" ]
         }
