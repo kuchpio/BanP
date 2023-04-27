@@ -1,0 +1,43 @@
+{
+    "manifest_version": 3,
+    "name": "smartban", 
+    "version": "0.4.0",
+    "description": "Simple extension that gives information about diffrent csgo maps on FACEIT platform.",
+    "icons": {
+        "128": "assets/logo.png"
+    },
+    "permissions": [
+        "webNavigation",
+        "storage"
+    ],
+    "host_permissions": [
+        "https://open.faceit.com/data/v4/*"
+    ], 
+    "action": {
+        "default_title": "smartban",
+        "default_popup": "popup.html"
+    },
+    "background": {
+        "service_worker": "background.js",
+        "type": "module"
+    },
+    "content_security_policy": {
+        "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+    },
+    "web_accessible_resources": [
+        {
+          "resources": [ 
+              "assets/collection_icon_de_dust2.png",
+              "assets/collection_icon_de_mirage.png",
+              "assets/collection_icon_de_nuke.png",
+              "assets/collection_icon_de_overpass.png",
+              "assets/collection_icon_de_train.png",
+              "assets/collection_icon_de_inferno.png",
+              "assets/collection_icon_de_vertigo.png",
+              "assets/collection_icon_de_ancient.png",
+              "assets/collection_icon_de_anubis.png"
+             ],
+          "extension_ids": [ "plpggcikpiciekafodekndcgipgdlhjn" ]
+        }
+    ]
+}

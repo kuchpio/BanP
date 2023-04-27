@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartBan</title>
+    <style type="text/css">
+        body {
+            background-color: #1A1A1D;
+            color: #a0a0a0;
+            font-family: sans-serif;
+            margin: 0;
+        }
+        #chartPanel {
+            padding: 10px;
+        }
+        #summaryPanel {
+            padding: 10px;
+        }
+        #comparisonContainer {
+            display: flex;
+        }
+        .teamContainer {
+            text-align: center;
+            padding: 10px;
+        }
+        #tableContainer {
+            text-align: center;
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            background-color: #1f1f1f;
+            width: 70%;
+            margin: auto;
+            line-height: 20px;
+            border-radius: 5px;
+        }
+        .tableHeader {
+            grid-column: 1 / span 3;
+            box-sizing: border-box;
+            border: 3px solid #1f1f1f;
+            border-radius: 5px;
+            padding: 15px;
+        }
+        .tableTitle {
+            color: #FFF;
+            background-color: #1f1f1f;
+            border-radius: 5px;
+            display: inline;
+            padding: 5px;
+        }
+        .buttonPanel {
+            display: flex;
+        }
+        .button {
+            width: 50%;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .button:hover {
+            color: #FFF;
+        }
+        .summaryMapsContainer {
+            width: 120px;
+            padding: 5px 15px 15px 15px; 
+        }
+        .mapContainer {
+            padding: 5px;
+            border-radius: 5px;
+            background-color: #1f1f1f;
+            margin: 5px 0;
+            color: #FFF;
+            font-weight: 600;
+            display: flex;
+            line-height: 30px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="buttonPanel">
+            <div id="summaryButton" class="button">
+                SUMMARY
+            </div>
+            <div id="chartButton" class="button">
+                CHART
+            </div>
+        </div>
+        <div id="summaryPanel">
+            <h3 style="text-align: center;">BEST PICKS</h3>
+            <div style="display: flex;">
+                <div class="summaryMapsContainer" style="text-align: left;">
+                    <h3 class="team1Name"></h3>
+                    <div id="bestMapsT1" style="display: flex; flex-direction:column; align-items: flex-start;">
+
+                    </div>
+                </div>
+                <div class="summaryMapsContainer" style="text-align: right;">
+                    <h3 class="team2Name"></h3>
+                    <div id="bestMapsT2" style="display: flex; flex-direction:column; align-items: flex-end;">
+
+                    </div>
+                </div>
+            </div>
+            <div style="border-bottom: 1px solid #a0a0a0;"></div>
+            <h3 style="text-align: center;">RECENTLY PLAYED</h3>
+            <div style="display: flex;">
+                <div class="summaryMapsContainer" style="text-align: left;">
+                    <h3 class="team1Name"></h3>
+                    <div id="recentMapsT1" style="display: flex; flex-direction:column; align-items: flex-start;">
+
+                    </div>
+                </div>
+                <div class="summaryMapsContainer" style="text-align: right;">
+                    <h3 class="team2Name"></h3>
+                    <div id="recentMapsT2" style="display: flex; flex-direction:column; align-items: flex-end;">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="chartPanel" style="display:none">
+            <div id="comparisonContainer">
+                <div class="teamContainer">
+                    <h3 class="team1Name"></h3>
+                    <canvas id="team1Canvas" width="250" height="250"></canvas>
+                </div>
+                <div class="teamContainer">
+                    <h3 class="team2Name"></h3>
+                    <canvas id="team2Canvas" width="250" height="250"></canvas>
+                </div>
+            </div>
+            <div id="tableContainer">
+                
+            </div>
+        </div>
+    </div>
+</body>
+<script type="module" src="popup.js"></script>
+</html>
