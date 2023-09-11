@@ -29,6 +29,8 @@ init().then(() => {
         if (CURRENT_MATCH_ID === lastMatchID) return;
 
         test("2e3c4f35-2878-4fd8-8de3-a046b5581256", CURRENT_MATCH_ID);
+
+        return;
         
         let [currentMatch, faction1, faction2] = await fetchMapStats(CURRENT_MATCH_ID);
 

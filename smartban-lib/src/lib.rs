@@ -1,8 +1,9 @@
 use futures::{stream::FuturesUnordered, StreamExt};
 use reqwest::{Client, header::{HeaderMap, self}};
-use serde::Deserialize;
 use serde_json::Value;
 use wasm_bindgen::prelude::*;
+
+mod smartban;
 
 #[wasm_bindgen]
 extern "C" {
@@ -14,69 +15,6 @@ extern "C" {
 #[allow(unused_macros)]
 macro_rules! console_log {
     ($($t:tt)*) => (log(&format_args!($($t)*).to_string()))
-}
-
-#[allow(non_camel_case_types)]
-#[derive(Deserialize, Debug, Clone)]
-pub enum CSMaps {
-    de_dust2, 
-    de_mirage, 
-    de_nuke, 
-    de_overpass, 
-    de_train, 
-    de_inferno, 
-    de_vertigo, 
-    de_ancient, 
-    de_anubis
-}
-
-#[derive(Debug)]
-pub enum SmartBanError {
-    Unknown,
-    RequestClientInitialization,
-    RequestGet(String),
-    DataDeserialization,
-}
-
-impl SmartBanError {
-    pub fn log(&self) {
-        console_log!("SMARTBAN: <ERROR> {}", &self);
-    }
-}
-
-impl From<reqwest::Error> for SmartBanError {
-    fn from(req_error: reqwest::Error) -> Self {
-        if req_error.is_builder() {
-            return Self::RequestClientInitialization;
-        }
-
-        if req_error.is_body() || req_error.is_decode() {
-            return Self::DataDeserialization
-        }
-
-        if req_error.is_status() || req_error.is_request() || req_error.is_status() || req_error.is_timeout() {
-            return Self::RequestGet(
-                String::from(
-                    req_error
-                    .url()
-                    .map_or("<empty-url>", |url| url.as_str())
-                )
-            );
-        }
-
-        return Self::Unknown;
-    }
-}
-
-impl std::fmt::Display for SmartBanError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match &self {
-            &Self::DataDeserialization => write!(f, "Got data in incompatible format."),
-            &Self::RequestClientInitialization => write!(f, "Couldn't initialize request client."),
-            &Self::RequestGet(url) => write!(f, "Couldn't get data from {}.", url),
-            &Self::Unknown =>  write!(f, "Unknown error occured.")
-        }
-    }
 }
 
 #[derive(Debug)]
@@ -131,6 +69,23 @@ impl SmartbanWorker {
         })
     }
 
+    pub fn set_history_depth(&mut self, history_depth: u8) {
+        self.history_depth = history_depth;
+    }
+
+    pub fn set_recently_threshold_hours(&mut self, recently_threshold_hours: u32) {
+        self.recently_threshold_hours = recently_threshold_hours;
+    }
+
+    async fn json_from_url(&self, url: &str) -> Result<Value, SmartBanError> {
+        Ok(
+            self.req_client
+                .get(url)
+                .send().await?
+                .json().await?
+        )
+    }
+
     fn team_data_from_value(team_value: Option<&Value>) -> Result<TeamData, SmartBanError> {
         let name = team_value
             .and_then(|team_value| team_value.get("name"))
@@ -153,7 +108,7 @@ impl SmartbanWorker {
         if let (Some(name), Some(leader), Some(players)) = (name, leader, players) {
             Ok(TeamData { name, leader, players })
         } else {
-            Err(SmartBanError::DataDeserialization)
+            Err(SmartBanError::DataDeserialization(String::from("name, leader, players")))
         }
     }
 
@@ -171,7 +126,7 @@ impl SmartbanWorker {
 
         let left_team = Self::team_data_from_value(left_team_value)?;
         let right_team = Self::team_data_from_value(right_team_value)?;
-
+        
         Ok((left_team, right_team))
     }
 
@@ -198,7 +153,7 @@ impl SmartbanWorker {
                     return None;
                 }
             }).collect()))
-            .ok_or(SmartBanError::DataDeserialization)
+            .ok_or(SmartBanError::DataDeserialization(String::from("match_id, finished_at")))
     }
 
     async fn get_player_match_stats(&self, player_id: &str, history_match: HistoryMatchData) -> Result<PlayerMatchStats, SmartBanError> {
@@ -252,13 +207,13 @@ impl SmartbanWorker {
                 player_id: player_id.to_string(), 
                 match_id: history_match.match_id.to_string(), 
                 finished_at: history_match.finished_at,
-                map: map, 
+                map,  
                 win: player_won,
-                kills: kills,
-                deaths: deaths
+                kills,
+                deaths
             })
         } else {
-            Err(SmartBanError::DataDeserialization)
+            Err(SmartBanError::DataDeserialization(String::from("map, kills, deaths")))
         }
     }
 
@@ -296,6 +251,26 @@ impl SmartbanWorker {
                     }
                 }
             }).collect()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::SmartbanWorker;
+
+    const FACEIT_ACCESS_TOKEN: &str = "2e3c4f35-2878-4fd8-8de3-a046b5581256";
+    const SAMPLE_MATCH_ID: &str = "1-bce31260-7618-441a-aa1d-71b8719a5ec5";
+
+    #[tokio::test]
+    async fn match_test() {
+        let worker = SmartbanWorker::new(FACEIT_ACCESS_TOKEN, 20, 4).unwrap();
+        let (left_team, right_team) = worker.get_match_teams(SAMPLE_MATCH_ID).await.unwrap();
+        
+        println!("Left team: {:?}", left_team);
+        println!("Right team: {:?}", right_team);
+
+        // println!("Left team stats: {:?}", worker.get_team_stats(&left_team).await);
+        // println!("Right team stats: {:?}", worker.get_team_stats(&right_team).await);
     }
 }
 
